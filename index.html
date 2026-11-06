@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بقا در سیاره بیگانه | بازی آموزشی شیمی یازدهم</title>
+    <link href="https://cdn.jsdelivr.net/npm/vazirmatn@33.0.3/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --panel-bg: rgba(16, 24, 48, 0.75);
+            --border-glow: rgba(0, 242, 254, 0.4);
+            --primary-cyan: #00f2fe;
+            --accent-orange: #ff9a00;
+            --accent-purple: #7928ca;
+            --accent-green: #00e676;
+            --accent-red: #ff1744;
+            --text-main: #e0e6ed;
+            --text-dim: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Vazirmatn', sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(121, 40, 202, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(0, 242, 254, 0.12) 0%, transparent 40%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            padding: 15px;
+        }
+
+        /* Background Stars */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            background: transparent url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400"><circle cx="20" cy="50" r="1" fill="%23ffffff" opacity="0.4"/><circle cx="150" cy="120" r="1.5" fill="%2300f2fe" opacity="0.6"/><circle cx="280" cy="40" r="1" fill="%23ffffff" opacity="0.3"/><circle cx="340" cy="220" r="2" fill="%23ff9a00" opacity="0.5"/><circle cx="70" cy="300" r="1.2" fill="%23ffffff" opacity="0.5"/><circle cx="220" cy="350" r="1" fill="%2300f2fe" opacity="0.4"/></svg>') repeat;
+            animation: moveStars 100s linear infinite;
+        }
+
+        @keyframes moveStars {
+            from { background-position: 0 0; }
+            to { background-position: 1000px 1000px; }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 920px;
+            z-index: 1;
+            position: relative;
+        }
+
+        /* Glassmorphism Panel */
+        .glass-panel {
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-glow);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(0, 242, 254, 0.1);
+            padding: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .screen {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Landing Screen */
+        .landing-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .badge-sci-fi {
+            display: inline-block;
+            padding: 6px 16px;
+            background: rgba(0, 242, 254, 0.1);
+            border: 1px solid var(--primary-cyan);
+            color: var(--primary-cyan);
+            border-radius: 50px;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+        }
+
+        .title-glow {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ffffff 0%, var(--primary-cyan) 50%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 242, 254, 0.3);
+            margin-bottom: 8px;
+        }
+
+        .story-box {
+            background: rgba(0, 0, 0, 0.4);
+            border-right: 4px solid var(--primary-cyan);
+            padding: 18px 22px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            line-height: 1.8;
+            font-size: 1rem;
+            color: #cbd5e1;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
+            color: #fff;
+            border: none;
+            padding: 14px 28px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0, 114, 255, 0.4);
+            transition: all 0.25s ease;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 242, 254, 0.6);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--text-main);
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: var(--primary-cyan);
+            color: #fff;
+        }
+
+        .btn-mode {
+            padding: 18px 20px;
+            text-align: right;
+            border-radius: 14px;
+            border: 1px solid rgba(0, 242, 254, 0.3);
+            background: rgba(16, 24, 48, 0.8);
+            cursor: pointer;
+            transition: all 0.25s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-mode:hover {
+            border-color: var(--primary-cyan);
+            background: rgba(0, 242, 254, 0.12);
+            transform: translateX(-5px);
+        }
+
+        .btn-mode-title {
+            font-size: 1.15rem;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .btn-mode-desc {
+            font-size: 0.88rem;
+            color: var(--text-dim);
+        }
+
+        /* HUD Section */
+        .hud-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.35);
+            padding: 14px 20px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            flex: 1;
+            min-width: 170px;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .progress-bar-bg {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 100%;
+            transition: width 0.4s ease, background 0.4s ease;
+            border-radius: 20px;
+        }
+
+        .fill-oxygen { background: linear-gradient(90deg, #00e676, #00f2fe); }
+        .fill-fuel { background: linear-gradient(90deg, #7928ca, #ff9a00); }
+        .fill-timer { background: linear-gradient(90deg, #ff9a00, #ff1744); }
+
+        .stage-indicator {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: var(--primary-cyan);
+            background: rgba(0, 242, 254, 0.08);
+            padding: 6px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 242, 254, 0.2);
+        }
+
+        .timer-badge {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: var(--accent-orange);
+            background: rgba(255, 154, 0, 0.1);
+            padding: 6px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 154, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Question Card */
+        .question-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .question-tag {
+            display: inline-block;
+            font-size: 0.8rem;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .tag-purity { background: rgba(0, 242, 254, 0.15); color: var(--primary-cyan); }
+        .tag-yield { background: rgba(255, 154, 0, 0.15); color: var(--accent-orange); }
+        .tag-combined { background: rgba(224, 64, 251, 0.15); color: #e040fb; }
+
+        .question-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 18px;
+            color: #f1f5f9;
+        }
+
+        .equation-box {
+            direction: ltr;
+            text-align: center;
+            background: #050813;
+            border: 1px dashed var(--primary-cyan);
+            padding: 12px;
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 1.25rem;
+            color: var(--primary-cyan);
+            margin-bottom: 22px;
+            letter-spacing: 1px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 12px;
+        }
+
+        .option-btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: var(--text-main);
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-align: right;
+            transition: all 0.2s ease;
+        }
+
+        .option-btn:hover:not(.disabled) {
+            background: rgba(0, 242, 254, 0.1);
+            border-color: var(--primary-cyan);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        .option-btn.correct {
+            background: rgba(0, 230, 118, 0.2) !important;
+            border-color: var(--accent-green) !important;
+            color: #fff !important;
+            font-weight: bold;
+        }
+
+        .option-btn.wrong {
+            background: rgba(255, 23, 68, 0.2) !important;
+            border-color: var(--accent-red) !important;
+            color: #fff !important;
+        }
+
+        .option-btn.disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        /* Next Question Direct Bar */
+        .action-next-bar {
+            margin-top: 20px;
+            display: none;
+            text-align: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .action-next-bar.active {
+            display: block;
+        }
+
+        /* Factor-Label Chain Fraction Styling */
+        .stoich-chain {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            direction: ltr;
+            margin: 14px 0;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 242, 254, 0.2);
+            font-family: 'Vazirmatn', monospace, sans-serif;
+            font-size: 0.95rem;
+        }
+
+        .stoich-term {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .stoich-frac {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            vertical-align: middle;
+            padding: 0 4px;
+        }
+
+        .frac-num {
+            border-bottom: 2px solid var(--primary-cyan);
+            padding: 2px 8px;
+            text-align: center;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .frac-den {
+            padding: 2px 8px;
+            text-align: center;
+            color: #e2e8f0;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .stoich-times {
+            color: var(--accent-orange);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .stoich-eq {
+            color: var(--accent-green);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .stoich-ans {
+            color: var(--accent-green);
+            font-weight: bold;
+            font-size: 1.05rem;
+        }
+
+        /* Toolbar */
+        .tools-toolbar {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 15px;
+        }
+
+        .tool-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: var(--text-dim);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tool-btn:hover {
+            color: #fff;
+            border-color: var(--primary-cyan);
+            background: rgba(0, 242, 254, 0.1);
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 8, 18, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-card {
+            background: #111827;
+            border: 1px solid var(--primary-cyan);
+            box-shadow: 0 0 35px rgba(0, 242, 254, 0.25);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 620px;
+            padding: 25px;
+            position: relative;
+            max-height: 88vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 12px;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            color: var(--primary-cyan);
+            font-weight: 700;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            font-size: 1.6rem;
+            cursor: pointer;
+        }
+
+        .close-modal:hover { color: #fff; }
+
+        /* Designer Profile */
+        .profile-card {
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-cyan), var(--accent-purple));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            margin: 0 auto 15px;
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.4);
+        }
+
+        .profile-name {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .profile-title {
+            color: var(--accent-orange);
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+        }
+
+        .profile-info-list {
+            list-style: none;
+            text-align: right;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 15px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            font-size: 0.95rem;
+        }
+
+        .profile-info-list li {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        /* Formula Sheet */
+        .formula-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-right: 3px solid var(--primary-cyan);
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .formula-title {
+            font-weight: bold;
+            color: var(--accent-orange);
+            margin-bottom: 5px;
+        }
+
+        /* Explanation Box */
+        .explanation-box {
+            background: rgba(255, 23, 68, 0.08);
+            border: 1px solid rgba(255, 23, 68, 0.3);
+            border-radius: 12px;
+            padding: 18px;
+            margin-top: 15px;
+            line-height: 1.8;
+            font-size: 0.98rem;
+        }
+
+        .explanation-box.success {
+            background: rgba(0, 230, 118, 0.08);
+            border-color: rgba(0, 230, 118, 0.3);
+        }
+
+        .footer-credits {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .footer-credits:hover {
+            color: var(--primary-cyan);
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="stars"></div>
+
+    <div class="container">
+        <!-- 1. LANDING SCREEN -->
+        <div id="screen-landing" class="screen glass-panel active">
+            <div class="landing-header">
+                <span class="badge-sci-fi">شیمی یازدهم • ابزار تعاملی آموزش</span>
+                <h1 class="title-glow">بقا در سیاره بیگانه</h1>
+                <p style="color: var(--text-dim);">چالش استوکیومتری: درصد خلوص و بازده درصدی</p>
+            </div>
+
+            <div class="story-box">
+                🚨 <strong>هشدار فرود اضطراری!</strong><br>
+                سفینه شما در سیاره غیرقابل‌سکونت <em>اکسپدیژن-۱۱</em> دچار آسیب شده است. مخازن اکسیژن خالی و سوخت موشک به اتمام رسیده. تنها راه بقا، تصفیه کانی‌های خام و محاسبات استوکیومتری دقیق به روش کسرهای زنجیره‌ای است!<br><br>
+                ⚠️ <strong>قانون چالش اکسیژن:</strong> با هر پاسخ اشتباه (یا اتمام مهلت زمان در حالت چالش)، <strong>۱۵ واحد از اکسیژن سفینه کم می‌شود!</strong>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn" onclick="openModal('modal-mode-select')">
+                    🚀 شروع ماموریت نجات
+                </button>
+                <button class="btn btn-secondary" onclick="openModal('modal-designer')">
+                    👩‍🏫 درباره طراح بازی
+                </button>
+                <button class="btn btn-secondary" onclick="openModal('modal-formula')">
+                    📖 دفترچه فرمول‌های سریع شیمی
+                </button>
+            </div>
+
+            <div class="footer-credits" onclick="openModal('modal-designer')">
+                طراحی شده توسط: <strong>حمیده جلالی</strong> (کارشناسی ارشد شیمی تجزیه • دبیر شیمی)
+            </div>
+        </div>
+
+        <!-- 2. GAME HUD SCREEN -->
+        <div id="screen-game" class="screen glass-panel">
+            <!-- HUD -->
+            <div class="hud-bar">
+                <div class="stat-box">
+                    <div class="stat-label">
+                        <span>🫁 مخزن اکسیژن (سلامت):</span>
+                        <span id="oxygen-val">۱۰۰٪</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div id="oxygen-bar" class="progress-fill fill-oxygen" style="width: 100%;"></div>
+                    </div>
+                </div>
+
+                <div class="stat-box">
+                    <div class="stat-label">
+                        <span>⚡ پیشرفت سوخت‌رسانی:</span>
+                        <span id="fuel-val">۰٪</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div id="fuel-bar" class="progress-fill fill-fuel" style="width: 0%;"></div>
+                    </div>
+                </div>
+
+                <div id="timer-box" class="stat-box" style="display: none;">
+                    <div class="stat-label">
+                        <span>⏱️ مهلت سوال:</span>
+                        <span id="timer-val">90 ثانیه</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div id="timer-bar" class="progress-fill fill-timer" style="width: 100%;"></div>
+                    </div>
+                </div>
+
+                <div class="stage-indicator" id="stage-text">
+                    📍 مرحله ۱: استخراج کانی‌ها
+                </div>
+            </div>
+
+            <!-- QUESTION CARD -->
+            <div class="question-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <span id="question-tag" class="question-tag tag-purity">درصد خلوص</span>
+                    <span id="mode-badge" class="badge-sci-fi" style="font-size: 0.75rem; padding: 3px 10px; margin: 0;">بدون زمان</span>
+                    <span id="question-num" style="font-size: 0.85rem; color: var(--text-dim);">سوال ۱ از ۱۵</span>
+                </div>
+
+                <div id="question-text" class="question-text">
+                    در حال بارگذاری سوال...
+                </div>
+
+                <div id="equation-box" class="equation-box">
+                    CaCO3 -> CaO + CO2
+                </div>
+
+                <div class="options-grid" id="options-container">
+                    <!-- Dynamic Options -->
+                </div>
+
+                <!-- Action Bar for Direct Next Question -->
+                <div id="action-next-bar" class="action-next-bar">
+                    <button class="btn" style="width: 100%; margin: 0 auto;" onclick="nextQuestion()">
+                        ورود به سوال بعدی ➔
+                    </button>
+                </div>
+            </div>
+
+            <!-- TOOLBAR -->
+            <div class="tools-toolbar">
+                <button class="tool-btn" onclick="openModal('modal-formula')">
+                    💡 فرمول‌ها
+                </button>
+                <button class="tool-btn" onclick="openModal('modal-designer')">
+                    👤 طراح
+                </button>
+            </div>
+        </div>
+
+        <!-- 3. GAMEOVER / VICTORY SCREEN -->
+        <div id="screen-end" class="screen glass-panel" style="text-align: center;">
+            <div id="end-icon" style="font-size: 4rem; margin-bottom: 15px;">🎉</div>
+            <h2 id="end-title" class="title-glow">موفقیت در ماموریت!</h2>
+            <p id="end-desc" style="color: var(--text-dim); line-height: 1.8; margin-bottom: 25px;">
+                شما توانستید با محاسبات دقیق شیمیایی، سوخت و اکسیژن سفینه را تامین کرده و از سیاره اکسپدیژن-۱۱ پرواز کنید!
+            </p>
+
+            <div style="background: rgba(0,0,0,0.4); padding: 20px; border-radius: 14px; margin-bottom: 25px; display: inline-block; width: 100%; max-width: 420px;">
+                <div style="margin-bottom: 10px;">📊 <strong>کارنامه عملیات:</strong></div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span>پاسخ‌های درست:</span>
+                    <strong id="stat-correct" style="color: var(--accent-green);">۰</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span>اکسیژن باقی‌مانده:</span>
+                    <strong id="stat-oxygen" style="color: var(--primary-cyan);">۱۰۰٪</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span>حالت بازی:</span>
+                    <strong id="stat-mode" style="color: var(--accent-orange);">بدون زمان</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>رتبه علمی دریافت شده:</span>
+                    <strong id="stat-rank" style="color: var(--accent-green);">کیمیاگر کهکشانی</strong>
+                </div>
+            </div>
+
+            <br>
+            <button class="btn" onclick="openModal('modal-mode-select')" style="margin: 0 auto;">
+                🔄 بازی مجدد / تغییر حالت
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL: MODE SELECT -->
+    <div id="modal-mode-select" class="modal-overlay">
+        <div class="modal-card" style="max-width: 500px;">
+            <div class="modal-header">
+                <span class="modal-title">انتخاب حالت بازی</span>
+                <button class="close-modal" onclick="closeModal('modal-mode-select')">&times;</button>
+            </div>
+            <p style="color: var(--text-dim); margin-bottom: 20px; text-align: center;">
+                لطفاً شیوه اجرای ماموریت نجات را انتخاب کنید:
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <div class="btn-mode" onclick="selectGameMode('untimed')">
+                    <div>
+                        <div class="btn-mode-title">🟢 حالت ۱: بدون زمان (تمرینی)</div>
+                        <div class="btn-mode-desc">بدون محدودیت زمانی • مناسب تمرکز بر فرمول‌نویسی دقیق کسرهای زنجیره‌ای</div>
+                    </div>
+                    <span style="font-size: 1.5rem;">🧘‍♂️</span>
+                </div>
+
+                <div class="btn-mode" onclick="selectGameMode('timed')">
+                    <div>
+                        <div class="btn-mode-title">⚡ حالت ۲: زمان معکوس (چالش بقا)</div>
+                        <div class="btn-mode-desc">مهلت ۹۰ ثانیه برای هر سوال • هیجان بالا و سنجش سرعت عمل محاسبات</div>
+                    </div>
+                    <span style="font-size: 1.5rem;">⏱️</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: DESIGNER PROFILE -->
+    <div id="modal-designer" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <span class="modal-title">شناسنامه طراح بازی</span>
+                <button class="close-modal" onclick="closeModal('modal-designer')">&times;</button>
+            </div>
+            <div class="profile-card">
+                <div class="profile-avatar">👩‍🔬</div>
+                <div class="profile-name">حمیده جلالی</div>
+                <div class="profile-title">طراح و ایده‌پرداز ابزار آموزشی شیمی</div>
+                <ul class="profile-info-list">
+                    <li>🎓 <strong>مدرک تحصیلی:</strong> کارشناسی ارشد شیمی تجزیه</li>
+                    <li>🏫 <strong>جایگاه شغلی:</strong> دبیر شیمی</li>
+                    <li>💡 <strong>هدف پروژه:</strong> تعاملی‌سازی و تسهیل یادگیری استوکیومتری، درصد خلوص و بازده درصدی شیمی یازدهم با کسرهای زنجیره‌ای</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: FORMULA GUIDE -->
+    <div id="modal-formula" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <span class="modal-title">📖 دفترچه راهنمای سریع فرمول‌ها</span>
+                <button class="close-modal" onclick="closeModal('modal-formula')">&times;</button>
+            </div>
+            
+            <div class="formula-item">
+                <div class="formula-title">۱. درصد خلوص</div>
+                <div class="stoich-chain" style="direction: rtl; justify-content: center; font-size: 1.05rem;">
+                    <span class="stoich-term" style="color: var(--primary-cyan); font-weight: bold;">درصد خلوص =</span>
+                    <span class="stoich-frac">
+                        <span class="frac-num">جرم ماده خالص</span>
+                        <span class="frac-den">جرم ماده ناخالص</span>
+                    </span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-term">۱۰۰</span>
+                </div>
+            </div>
+
+            <div class="formula-item">
+                <div class="formula-title">۲. بازده درصدی</div>
+                <div class="stoich-chain" style="direction: rtl; justify-content: center; font-size: 1.05rem;">
+                    <span class="stoich-term" style="color: var(--accent-orange); font-weight: bold;">بازده درصدی =</span>
+                    <span class="stoich-frac">
+                        <span class="frac-num">مقدار واقعی محصول</span>
+                        <span class="frac-den">مقدار نظری محصول</span>
+                    </span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-term">۱۰۰</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: EXPLANATION / FEEDBACK -->
+    <div id="modal-feedback" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <span id="feedback-title" class="modal-title">نتیجه پاسخ</span>
+                <button class="close-modal" onclick="closeFeedbackAndNext()">&times;</button>
+            </div>
+            <div id="feedback-body" class="explanation-box">
+                <!-- Dynamic text -->
+            </div>
+            <button class="btn" style="margin-top: 20px; width: 100%;" onclick="closeFeedbackAndNext()">
+                سوال بعدی ➔
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // QUESTION BANK WITH STOICHIOMETRIC FACTOR-LABEL CHAIN FRACTIONS
+        const questions = [
+            // Stage 1: Purity (1-5)
+            {
+                type: 'purity',
+                tag: 'درصد خلوص • مرحله ۱',
+                text: 'روبات کاوشگر، یک کلوخه ۵۰ گرمی از سنگ پتاسیم کلرات (KClO3) ناخالص پیدا کرده است. برای تولید اکسیژن، سنگ در کوره قرار می‌گیرد. اگر ۲۴.۵ گرم KClO3 خالص در آن وجود داشته باشد، درصد خلوص سنگ چقدر است؟',
+                eq: '2KClO3 -> 2KCl + 3O2',
+                options: ['الف) ۴۰٪', 'ب) ۴۹٪', 'ج) ۵۰٪', 'د) ۹۸٪'],
+                correct: 1,
+                explanation: `<strong>روش کسر تبدیل زنجیره‌ای:</strong><br>
+                <div class="stoich-chain">
+                    <span class="stoich-term">درصد خلوص =</span>
+                    <span class="stoich-frac"><span class="frac-num">24.5 g KClO3 (خالص)</span><span class="frac-den">50 g سنگ (ناخالص)</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-term">100</span>
+                    <span class="stoich-eq">=</span>
+                    <span class="stoich-ans">49%</span>
+                </div>`
+            },
+            {
+                type: 'purity',
+                tag: 'درصد خلوص • مرحله ۱',
+                text: 'برای عایق‌کاری سفینه به CO2 نیاز دارید. ۲۰۰ گرم سنگ آهک (CaCO3) با خلوص ۸۰٪ حرارت داده می‌شود. چند گرم CO2 تولید می‌شود؟ (CaCO3 = 100 g/mol , CO2 = 44 g/mol)',
+                eq: 'CaCO3 -> CaO + CO2',
+                options: ['الف) ۷۰.۴ گرم', 'ب) ۸۸ گرم', 'ج) ۳۵.۲ گرم', 'د) ۴۴ گرم'],
+                correct: 0,
+                explanation: `<strong>روش کسر تبدیل زنجیره‌ای:</strong><br>
+                <div class="stoich-chain">
+                    <span class="stoich-term">? g CO2 =</span>
+                    <span class="stoich-term">200 g ناخالص</span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">80 g CaCO3</span><span class="frac-den">100 g ناخالص</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">1 mol CaCO3</span><span class="frac-den">100 g CaCO3</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">1 mol CO2</span><span class="frac-den">1 mol CaCO3</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">44 g CO2</span><span class="frac-den">1 mol CO2</span></span>
+                    <span class="stoich-eq">=</span>
+                    <span class="stoich-ans">70.4 g CO2</span>
+                </div>`
+            },
+            {
+                type: 'purity',
+                tag: 'درصد خلوص • مرحله ۱',
+                text: 'برای تولید هیدروژن مخزن، ۶۵ گرم قطعه روی ناخالص با اسید واکنش داده و ۱۷.۹۲ لیتر گاز H2 در شرایط STP تولید می‌کند. خلوص فلز روی چند درصد بوده است؟ (Zn = 65 g/mol)',
+                eq: 'Zn + 2HCl -> ZnCl2 + H2',
+                options: ['الف) ۶۰٪', 'ب) ۷۰٪', 'ج) ۸۰٪', 'د) ۹۰٪'],
+                correct: 2,
+                explanation: `<strong>روش کسر تبدیل زنجیره‌ای:</strong><br>
+                <div class="stoich-chain">
+                    <span class="stoich-term">? g Zn (خالص) =</span>
+                    <span class="stoich-term">17.92 L H2</span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">1 mol H2</span><span class="frac-den">22.4 L H2</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">1 mol Zn</span><span class="frac-den">1 mol H2</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">65 g Zn</span><span class="frac-den">1 mol Zn</span></span>
+                    <span class="stoich-eq">=</span>
+                    <span class="stoich-ans">52 g Zn</span>
+                </div>
+                <br>درصد خلوص = (۵۲ ÷ ۶۵) × ۱۰۰ = <strong>۸۰٪</strong>`
+            },
+            {
+                type: 'purity',
+                tag: 'درصد خلوص • مرحله ۱',
+                text: '۴۰۰ گرم سنگ هماتیت ناخالص (Fe2O3) با خلوص ۷۵٪ در اختیار دارید. با کربن کافی واکنش داده و آهن مذاب برای ساخت قطعات تولید می‌شود. چند گرم آهن خالص به دست می‌آید؟ (Fe2O3 = 160 , Fe = 56)',
+                eq: '2Fe2O3 + 3C -> 4Fe + 3CO2',
+                options: ['الف) ۲۱۰ گرم', 'ب) ۱۴۰ گرم', 'ج) ۲۸۰ گرم', 'د) ۱۰۵ گرم'],
+                correct: 0,
+                explanation: `<strong>روش کسر تبدیل زنجیره‌ای:</strong><br>
+                <div class="stoich-chain">
+                    <span class="stoich-term">? g Fe =</span>
+                    <span class="stoich-term">400 g ناخالص</span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">75 g Fe2O3</span><span class="frac-den">100 g ناخالص</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">1 mol Fe2O3</span><span class="frac-den">160 g Fe2O3</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">4 mol Fe</span><span class="frac-den">2 mol Fe2O3</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">56 g Fe</span><span class="frac-den">1 mol Fe</span></span>
+                    <span class="stoich-eq">=</span>
+                    <span class="stoich-ans">210 g Fe</span>
+                </div>`
+            },
+            {
+                type: 'purity',
+                tag: 'درصد خلوص • مرحله ۱',
+                text: '۶۴ گرم گاز متان ناخالص با خلوص ۹۰٪ برای گرمایش کپسول سوزانده می‌شود. چند گرم بخار آب تشکیل می‌شود؟ (CH4 = 16 , H2O = 18)',
+                eq: 'CH4 + 2O2 -> CO2 + 2H2O',
+                options: ['الف) ۱۲۹.۶ گرم', 'ب) ۱۴۴ گرم', 'ج) ۶۴.۸ گرم', 'د) ۷۲ گرم'],
+                correct: 0,
+                explanation: `<strong>روش کسر تبدیل زنجیره‌ای:</strong><br>
+                <div class="stoich-chain">
+                    <span class="stoich-term">? g H2O =</span>
+                    <span class="stoich-term">64 g متان ناخالص</span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">90 g CH4</span><span class="frac-den">100 g ناخالص</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">1 mol CH4</span><span class="frac-den">16 g CH4</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">2 mol H2O</span><span class="frac-den">1 mol CH4</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">18 g H2O</span><span class="frac-den">1 mol H2O</span></span>
+                    <span class="stoich-eq">=</span>
+                    <span class="stoich-ans">129.6 g H2O</span>
+                </div>`
+            },
+
+            // Stage 2: Yield (6-10)
+            {
+                type: 'yield',
+                tag: 'بازده درصدی • مرحله ۲',
+                text: 'دستگاه تولید آمونیاک با ۵۶ گرم نیتروژن کار می‌کند. اگر مقدار واقعی آمونیاک تولیدشده ۵۱ گرم باشد، بازده درصدی سیستم چقدر است؟ (N2 = 28 , NH3 = 17)',
+                eq: 'N2 + 3H2 -> 2NH3',
+                options: ['الف) ۶۵٪', 'ب) ۷۵٪', 'ج) ۸۵٪', 'د) ۹۰٪'],
+                correct: 1,
+                explanation: `<strong>روش کسر تبدیل زنجیره‌ای (محاسبه مقدار نظری):</strong><br>
+                <div class="stoich-chain">
+                    <span class="stoich-term">? g NH3 (نظری) =</span>
+                    <span class="stoich-term">56 g N2</span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">1 mol N2</span><span class="frac-den">28 g N2</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">2 mol NH3</span><span class="frac-den">1 mol N2</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">17 g NH3</span><span class="frac-den">1 mol NH3</span></span>
+                    <span class="stoich-eq">=</span>
+                    <span class="stoich-ans">68 g NH3</span>
+                </div>
+                <br>بازده درصدی = (۵۱ ÷ ۶۸) × ۱۰۰ = <strong>۷۵٪</strong>`
+            },
+            {
+                type: 'yield',
+                tag: 'بازده درصدی • مرحله ۲',
+                text: 'برای تهیه نمک خوراکی، ۴۶ گرم سدیم خالص با کلر واکنش داده و ۹۳.۶ گرم نمک تولید می‌شود. بازده واکنش چقدر است؟ (Na = 23 , NaCl = 58.5)',
+                eq: '2Na + Cl2 -> 2NaCl',
+                options: ['الف) ۷۰٪', 'ب) ۷۵٪', 'ج) ۸۰٪', 'د) ۸۵٪'],
+                correct: 2,
+                explanation: `<strong>روش کسر تبدیل زنجیره‌ای:</strong><br>
+                <div class="stoich-chain">
+                    <span class="stoich-term">? g NaCl (نظری) =</span>
+                    <span class="stoich-term">46 g Na</span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">1 mol Na</span><span class="frac-den">23 g Na</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">2 mol NaCl</span><span class="frac-den">2 mol Na</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">58.5 g NaCl</span><span class="frac-den">1 mol NaCl</span></span>
+                    <span class="stoich-eq">=</span>
+                    <span class="stoich-ans">117 g NaCl</span>
+                </div>
+                <br>بازده درصدی = (۹۳.۶ ÷ ۱۱۷) × ۱۰۰ = <strong>۸۰٪</strong>`
+            },
+            {
+                type: 'yield',
+                tag: 'بازده درصدی • مرحله ۲',
+                text: 'دستگاه برق‌کافت آب به دلیل نشتی دارای ۸۵٪ بازده است. از تجزیه ۳۶ گرم آب، چند گرم اکسیژن واقعی جمع‌آوری می‌شود؟ (H2O = 18 , O2 = 32)',
+                eq: '2H2O -> 2H2 + O2',
+                options: ['الف) ۳۲ گرم', 'ب) ۲۷.۲ گرم', 'ج) ۱۶ گرم', 'د) ۱۳.۶ گرم'],
+                correct: 1,
+                explanation: `<strong>روش کسر تبدیل زنجیره‌ای (مستقیم با ضرب بازده):</strong><br>
+                <div class="stoich-chain">
+                    <span class="stoich-term">? g O2 (واقعی) =</span>
+                    <span class="stoich-term">36 g H2O</span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">1 mol H2O</span><span class="frac-den">18 g H2O</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">1 mol O2</span><span class="frac-den">2 mol H2O</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">32 g O2</span><span class="frac-den">1 mol O2</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">85 (واقعی)</span><span class="frac-den">100 (نظری)</span></span>
+                    <span class="stoich-eq">=</span>
+                    <span class="stoich-ans">27.2 g O2</span>
+                </div>`
+            },
+            {
+                type: 'yield',
+                tag: 'بازده درصدی • مرحله ۲',
+                text: 'برای ساخت تراشه‌های سفینه، سیلیسیوم خالص با کلر واکنش می‌دهد. اگر ۵۶ گرم Si وارد واکنش شده و بازده واکنش ۹۰٪ باشد، چند گرم SiCl4 تولید می‌شود؟ (Si = 28 , SiCl4 = 170)',
+                eq: 'Si + 2Cl2 -> SiCl4',
+                options: ['الف) ۳۴۰ گرم', 'ب) ۳۰۶ گرم', 'ج) ۱۷۰ گرم', 'د) ۱۵۳ گرم'],
+                correct: 1,
+                explanation: `<strong>روش کسر تبدیل زنجیره‌ای:</strong><br>
+                <div class="stoich-chain">
+                    <span class="stoich-term">? g SiCl4 (واقعی) =</span>
+                    <span class="stoich-term">56 g Si</span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">1 mol Si</span><span class="frac-den">28 g Si</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">1 mol SiCl4</span><span class="frac-den">1 mol Si</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">170 g SiCl4</span><span class="frac-den">1 mol SiCl4</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">90</span><span class="frac-den">100</span></span>
+                    <span class="stoich-eq">=</span>
+                    <span class="stoich-ans">306 g SiCl4</span>
+                </div>`
+            },
+            {
+                type: 'yield',
+                tag: 'بازده درصدی • مرحله ۲',
+                text: 'برای باز کردن دریچه اضطراری، ۱۲ گرم منیزیوم با اسید واکنش می‌دهد. اگر بازده واکنش ۷۰٪ باشد، چند لیتر گاز H2 در شرایط STP آزاد می‌شود؟ (Mg = 24)',
+                eq: 'Mg + 2HCl -> MgCl2 + H2',
+                options: ['الف) ۱۱.۲ لیتر', 'ب) ۷.۸۴ لیتر', 'ج) ۵.۶ لیتر', 'د) ۳.۹۲ لیتر'],
+                correct: 1,
+                explanation: `<strong>روش کسر تبدیل زنجیره‌ای:</strong><br>
+                <div class="stoich-chain">
+                    <span class="stoich-term">? L H2 (واقعی) =</span>
+                    <span class="stoich-term">12 g Mg</span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">1 mol Mg</span><span class="frac-den">24 g Mg</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">1 mol H2</span><span class="frac-den">1 mol Mg</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">22.4 L H2</span><span class="frac-den">1 mol H2</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">70</span><span class="frac-den">100</span></span>
+                    <span class="stoich-eq">=</span>
+                    <span class="stoich-ans">7.84 L H2</span>
+                </div>`
+            },
+
+            // Stage 3: Combined (11-15)
+            {
+                type: 'combined',
+                tag: 'ترکیبی • مرحله ۳',
+                text: '۲۰۰ گرم پتاسیم کلرات (KClO3) ناخالص با خلوص ۸۰٪ در کوره‌ای با بازده ۷۵٪ تجزیه می‌شود. جرم اکسیژن واقعی تولیدشده چند گرم است؟ (KClO3 = 122.5 , O2 = 32)',
+                eq: '2KClO3 -> 2KCl + 3O2',
+                options: ['الف) ۶۲.۷ گرم', 'ب) ۴۷.۰ گرم', 'ج) ۳۱.۳ گرم', 'د) ۲۳.۵ گرم'],
+                correct: 1,
+                explanation: `<strong>روش تک‌خطی کسرهای زنجیره‌ای هم‌زمان (خلوص + بازده):</strong><br>
+                <div class="stoich-chain">
+                    <span class="stoich-term">? g O2 (واقعی) =</span>
+                    <span class="stoich-term">200 g ناخالص</span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">80 g KClO3</span><span class="frac-den">100 g ناخالص</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">1 mol KClO3</span><span class="frac-den">122.5 g KClO3</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">3 mol O2</span><span class="frac-den">2 mol KClO3</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">32 g O2</span><span class="frac-den">1 mol O2</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">75 (واقعی)</span><span class="frac-den">100 (نظری)</span></span>
+                    <span class="stoich-eq">=</span>
+                    <span class="stoich-ans">47.0 g O2</span>
+                </div>`
+            },
+            {
+                type: 'combined',
+                tag: 'ترکیبی • مرحله ۳',
+                text: '۲۵۰ گرم سنگ آهک ناخالص با خلوص ۸۰٪ حرارت داده می‌شود. اگر ۶۶ گرم CO2 حاصل شود، بازده درصدی کوره چقدر بوده است؟ (CaCO3 = 100 , CO2 = 44)',
+                eq: 'CaCO3 -> CaO + CO2',
+                options: ['الف) ۶۰٪', 'ب) ۷۰٪', 'ج) ۷۵٪', 'د) ۸۰٪'],
+                correct: 2,
+                explanation: `<strong>روش کسر تبدیل زنجیره‌ای (محاسبه CO2 نظری):</strong><br>
+                <div class="stoich-chain">
+                    <span class="stoich-term">? g CO2 (نظری) =</span>
+                    <span class="stoich-term">250 g ناخالص</span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">80 g CaCO3</span><span class="frac-den">100 g ناخالص</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">1 mol CaCO3</span><span class="frac-den">100 g CaCO3</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">1 mol CO2</span><span class="frac-den">1 mol CaCO3</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">44 g CO2</span><span class="frac-den">1 mol CO2</span></span>
+                    <span class="stoich-eq">=</span>
+                    <span class="stoich-ans">88 g CO2</span>
+                </div>
+                <br>بازده درصدی = (۶۶ ÷ ۸۸) × ۱۰۰ = <strong>۷۵٪</strong>`
+            },
+            {
+                type: 'combined',
+                tag: 'ترکیبی • مرحله ۳',
+                text: 'برای پرتاب موتور به ۴۴.۸ لیتر گاز H2 در شرایط STP نیاز داریم. سیستم واکنش فلز روی ناخالص با اسید دارای خلوص ۶۵٪ و بازده ۸۰٪ است. چند گرم سنگ ناخالص روی باید در مخزن بارگذاری شود؟ (Zn = 65)',
+                eq: 'Zn + 2HCl -> ZnCl2 + H2',
+                options: ['الف) ۱۶۲.۵ گرم', 'ب) ۲۰۰ گرم', 'ج) ۲۵۰ گرم', 'د) ۳۰۷.۷ گرم'],
+                correct: 2,
+                explanation: `<strong>روش کسر تبدیل معکوس زنجیره‌ای (از محصول واقعی به سنگ ناخالص):</strong><br>
+                <div class="stoich-chain">
+                    <span class="stoich-term">? g سنگ ناخالص =</span>
+                    <span class="stoich-term">44.8 L H2 (واقعی)</span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">100 (نظری)</span><span class="frac-den">80 (واقعی)</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">1 mol H2</span><span class="frac-den">22.4 L H2</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">1 mol Zn</span><span class="frac-den">1 mol H2</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">65 g Zn</span><span class="frac-den">1 mol Zn</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">100 g سنگ ناخالص</span><span class="frac-den">65 g Zn</span></span>
+                    <span class="stoich-eq">=</span>
+                    <span class="stoich-ans">250 g ناخالص</span>
+                </div>`
+            },
+            {
+                type: 'combined',
+                tag: 'ترکیبی • مرحله ۳',
+                text: '۴۰۰ گرم سنگ هماتیت با خلوص ۸۰٪ وارد کوره استخراج آهن با بازده ۹۰٪ می‌شود. چند گرم آهن خالص برای بدنه سفینه به دست می‌آید؟ (Fe2O3 = 160 , Fe = 56)',
+                eq: 'Fe2O3 + 3CO -> 2Fe + 3CO2',
+                options: ['الف) ۲۲۴ گرم', 'ب) ۲۰۱.۶ گرم', 'ج) ۱۷۹.۲ گرم', 'د) ۲۵۲ گرم'],
+                correct: 1,
+                explanation: `<strong>روش کسر تبدیل زنجیره‌ای هم‌زمان:</strong><br>
+                <div class="stoich-chain">
+                    <span class="stoich-term">? g Fe (واقعی) =</span>
+                    <span class="stoich-term">400 g ناخالص</span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">80 g Fe2O3</span><span class="frac-den">100 g ناخالص</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">1 mol Fe2O3</span><span class="frac-den">160 g Fe2O3</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">2 mol Fe</span><span class="frac-den">1 mol Fe2O3</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">56 g Fe</span><span class="frac-den">1 mol Fe</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">90</span><span class="frac-den">100</span></span>
+                    <span class="stoich-eq">=</span>
+                    <span class="stoich-ans">201.6 g Fe</span>
+                </div>`
+            },
+            {
+                type: 'combined',
+                tag: 'ترکیبی • مرحله ۳',
+                text: 'برای ساخت پوشش حرارتی موشک، ۱۲۰ گرم آلومینیوم ناخالص با خلوص ۹۰٪ در واکنشی با بازده ۸۵٪ به آلومینیوم اکسید تبدیل می‌شود. چند گرم Al2O3 حاصل می‌شود؟ (Al = 27 , Al2O3 = 102)',
+                eq: '4Al + 3O2 -> 2Al2O3',
+                options: ['الف) ۲۰۴ گرم', 'ب) ۱۷۳.۴ گرم', 'ج) ۲۲۶.۶ گرم', 'د) ۱۹۲.۶ گرم'],
+                correct: 1,
+                explanation: `<strong>روش کسر تبدیل زنجیره‌ای هم‌زمان:</strong><br>
+                <div class="stoich-chain">
+                    <span class="stoich-term">? g Al2O3 (واقعی) =</span>
+                    <span class="stoich-term">120 g Al ناخالص</span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">90 g Al</span><span class="frac-den">100 g ناخالص</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">1 mol Al</span><span class="frac-den">27 g Al</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">2 mol Al2O3</span><span class="frac-den">4 mol Al</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">102 g Al2O3</span><span class="frac-den">1 mol Al2O3</span></span>
+                    <span class="stoich-times">×</span>
+                    <span class="stoich-frac"><span class="frac-num">85</span><span class="frac-den">100</span></span>
+                    <span class="stoich-eq">=</span>
+                    <span class="stoich-ans">173.4 g Al2O3</span>
+                </div>`
+            }
+        ];
+
+        // GAME STATE
+        let currentGameMode = 'untimed'; // 'untimed' or 'timed'
+        let currentIndex = 0;
+        let oxygen = 100;
+        let correctCount = 0;
+        let answered = false;
+
+        // TIMER STATE
+        let timerInterval = null;
+        let timeLeft = 90;
+        const QUESTION_TIME_LIMIT = 90;
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function selectGameMode(mode) {
+            currentGameMode = mode;
+            closeModal('modal-mode-select');
+            startGame();
+        }
+
+        function startGame() {
+            currentIndex = 0;
+            oxygen = 100;
+            correctCount = 0;
+
+            const modeBadge = document.getElementById('mode-badge');
+            const timerBox = document.getElementById('timer-box');
+
+            if (currentGameMode === 'timed') {
+                modeBadge.innerText = '⚡ زمان معکوس (۹۰ ثانیه)';
+                modeBadge.style.color = 'var(--accent-orange)';
+                modeBadge.style.borderColor = 'var(--accent-orange)';
+                timerBox.style.display = 'block';
+            } else {
+                modeBadge.innerText = '🟢 بدون زمان (تمرینی)';
+                modeBadge.style.color = 'var(--primary-cyan)';
+                modeBadge.style.borderColor = 'var(--primary-cyan)';
+                timerBox.style.display = 'none';
+            }
+
+            updateHUD();
+            loadQuestion();
+            showScreen('screen-game');
+        }
+
+        function updateHUD() {
+            document.getElementById('oxygen-val').innerText = oxygen + '٪';
+            const oxBar = document.getElementById('oxygen-bar');
+            oxBar.style.width = oxygen + '%';
+            if (oxygen <= 30) {
+                oxBar.style.background = 'linear-gradient(90deg, #ff1744, #ff9a00)';
+            } else {
+                oxBar.style.background = 'linear-gradient(90deg, #00e676, #00f2fe)';
+            }
+
+            const fuelPercent = Math.round((correctCount / questions.length) * 100);
+            document.getElementById('fuel-val').innerText = fuelPercent + '٪';
+            document.getElementById('fuel-bar').style.width = fuelPercent + '%';
+
+            const stageText = document.getElementById('stage-text');
+            if (currentIndex < 5) {
+                stageText.innerText = '📍 مرحله ۱: استخراج کانی‌ها (خلوص)';
+            } else if (currentIndex < 10) {
+                stageText.innerText = '📍 مرحله ۲: سنتز دستگاه‌ها (بازده)';
+            } else {
+                stageText.innerText = '📍 مرحله ۳: سوخت‌رسانی و پرواز (ترکیبی)';
+            }
+        }
+
+        function resetTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            timeLeft = QUESTION_TIME_LIMIT;
+            
+            if (currentGameMode !== 'timed') return;
+
+            updateTimerUI();
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerUI();
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleTimeOut();
+                }
+            }, 1000);
+        }
+
+        function updateTimerUI() {
+            if (currentGameMode !== 'timed') return;
+            document.getElementById('timer-val').innerText = timeLeft + ' ثانیه';
+            const pct = Math.max(0, (timeLeft / QUESTION_TIME_LIMIT) * 100);
+            const tBar = document.getElementById('timer-bar');
+            tBar.style.width = pct + '%';
+            if (timeLeft <= 20) {
+                tBar.style.background = 'linear-gradient(90deg, #ff1744, #ff5252)';
+            } else {
+                tBar.style.background = 'linear-gradient(90deg, #ff9a00, #ff1744)';
+            }
+        }
+
+        function loadQuestion() {
+            answered = false;
+            document.getElementById('action-next-bar').classList.remove('active');
+
+            const q = questions[currentIndex];
+            
+            document.getElementById('question-num').innerText = `سوال ${currentIndex + 1} از ${questions.length}`;
+            document.getElementById('question-text').innerText = q.text;
+            document.getElementById('equation-box').innerText = q.eq;
+            
+            const tagEl = document.getElementById('question-tag');
+            tagEl.innerText = q.tag;
+            tagEl.className = 'question-tag ' + (q.type === 'purity' ? 'tag-purity' : q.type === 'yield' ? 'tag-yield' : 'tag-combined');
+
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => selectOption(idx, btn);
+                container.appendChild(btn);
+            });
+
+            resetTimer();
+        }
+
+        function handleTimeOut() {
+            if (answered) return;
+            answered = true;
+
+            const q = questions[currentIndex];
+            const allBtns = document.querySelectorAll('.option-btn');
+            allBtns.forEach(b => b.classList.add('disabled'));
+            allBtns[q.correct].classList.add('correct');
+
+            oxygen = Math.max(0, oxygen - 15);
+            updateHUD();
+
+            const feedbackTitle = document.getElementById('feedback-title');
+            const feedbackBody = document.getElementById('feedback-body');
+
+            feedbackTitle.innerText = '⏰ اتمام مهلت زمان (نشت اکسیژن)';
+            feedbackTitle.style.color = 'var(--accent-red)';
+            feedbackBody.className = 'explanation-box';
+            feedbackBody.innerHTML = `<strong>زمان ۹۰ ثانیه‌ای به پایان رسید!</strong> ۱۵٪ از اکسیژن مخزن کم شد.<br><br>${q.explanation}`;
+
+            document.getElementById('action-next-bar').classList.add('active');
+
+            setTimeout(() => {
+                openModal('modal-feedback');
+            }, 300);
+        }
+
+        function selectOption(selectedIndex, btnEl) {
+            if (answered) return;
+            answered = true;
+
+            if (timerInterval) clearInterval(timerInterval);
+
+            const q = questions[currentIndex];
+            const isCorrect = (selectedIndex === q.correct);
+
+            const allBtns = document.querySelectorAll('.option-btn');
+            allBtns.forEach(b => b.classList.add('disabled'));
+            allBtns[q.correct].classList.add('correct');
+
+            const feedbackTitle = document.getElementById('feedback-title');
+            const feedbackBody = document.getElementById('feedback-body');
+
+            if (isCorrect) {
+                correctCount++;
+                btnEl.classList.add('correct');
+                feedbackTitle.innerText = '✅ تایید خلوص و سنتز (پاسخ درست)';
+                feedbackTitle.style.color = 'var(--accent-green)';
+                feedbackBody.className = 'explanation-box success';
+                feedbackBody.innerHTML = `<strong>عالی بود!</strong> محاسبات شما کاملاً دقیق انجام شد.<br><br>${q.explanation}`;
+            } else {
+                btnEl.classList.add('wrong');
+                oxygen = Math.max(0, oxygen - 15);
+                feedbackTitle.innerText = '⚠️ هشدار نشت اکسیژن (پاسخ اشتباه)';
+                feedbackTitle.style.color = 'var(--accent-red)';
+                feedbackBody.className = 'explanation-box';
+                feedbackBody.innerHTML = `<strong>اشتباه محاسباتی!</strong> ۱۵٪ از اکسیژن مخزن کم شد.<br><br>${q.explanation}`;
+            }
+
+            updateHUD();
+            document.getElementById('action-next-bar').classList.add('active');
+
+            setTimeout(() => {
+                openModal('modal-feedback');
+            }, 400);
+        }
+
+        function closeFeedbackAndNext() {
+            closeModal('modal-feedback');
+            nextQuestion();
+        }
+
+        function nextQuestion() {
+            if (timerInterval) clearInterval(timerInterval);
+            closeModal('modal-feedback');
+
+            if (oxygen <= 0) {
+                endGame(false);
+                return;
+            }
+
+            currentIndex++;
+            if (currentIndex >= questions.length) {
+                endGame(true);
+            } else {
+                updateHUD();
+                loadQuestion();
+            }
+        }
+
+        function endGame(victory) {
+            if (timerInterval) clearInterval(timerInterval);
+            showScreen('screen-end');
+
+            const icon = document.getElementById('end-icon');
+            const title = document.getElementById('end-title');
+            const desc = document.getElementById('end-desc');
+
+            document.getElementById('stat-correct').innerText = `${correctCount} از ۱۵`;
+            document.getElementById('stat-oxygen').innerText = oxygen + '٪';
+            document.getElementById('stat-mode').innerText = (currentGameMode === 'timed' ? '⚡ زمان معکوس' : '🟢 بدون زمان');
+
+            let rank = 'شیمی‌دان مبتدی';
+            if (correctCount >= 14) rank = '🥇 کیمیاگر کهکشانی (عالی)';
+            else if (correctCount >= 11) rank = '🥈 مهندس ارشد سفینه (خوب)';
+            else if (correctCount >= 8) rank = '🥉 تکنسین آزمایشگاه (متوسط)';
+            document.getElementById('stat-rank').innerText = rank;
+
+            if (victory) {
+                icon.innerText = '🚀';
+                title.innerText = 'پرواز موفقیت‌آمیز به سمت زمین!';
+                desc.innerText = 'تبریک! شما با توانایی بالای خود در محاسبات استوکیومتری، تمام خطرات سیاره اکسپدیژن-۱۱ را پشت سر گذاشتید.';
+            } else {
+                icon.innerText = '💀';
+                title.innerText = 'اتمام اکسیژن سفینه!';
+                title.style.color = 'var(--accent-red)';
+                desc.innerText = 'متاسفانه اکسیژن مخزن به پایان رسید و سیستم بقا از کار افتاد. دوباره تلاش کنید تا به فرمول‌ها تسلط پیدا کنید!';
+            }
+        }
+    </script>
+</body>
+</html>
